@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IF SLR - Download &amp; Install</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+            --code-bg: #0d1117;
+            --accent: #38bdf8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .platform-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0;
+        }
+
+        .platform-tab {
+            padding: 0.75rem 1.25rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .platform-tab:hover {
+            color: var(--text);
+        }
+
+        .platform-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .install-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .install-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .install-section p {
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            position: relative;
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+
+        .code-block code {
+            color: var(--accent);
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.4rem 0.75rem;
+            background: var(--surface-hover);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            color: var(--text);
+            border-color: var(--primary);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+            color: #fff;
+            border-color: var(--success);
+        }
+
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .steps {
+            margin-top: 1.5rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+            color: var(--text);
+        }
+
+        .step-content p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        .platform-content {
+            display: none;
+        }
+
+        .platform-content.active {
+            display: block;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: var(--surface-hover);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .note {
+            background: rgba(37, 99, 235, 0.1);
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .note strong {
+            color: var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.75rem;
+            }
+
+            .install-section {
+                padding: 1.25rem;
+            }
+
+            .platform-tabs {
+                overflow-x: auto;
+            }
+
+            .platform-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>IF SLR</h1>
+            <p>Systematic Literature Review Tool - Quick Install Guide</p>
+        </header>
+
+        <div class="platform-tabs" role="tablist">
+            <button class="platform-tab active" role="tab" data-platform="windows" aria-selected="true">Windows</button>
+            <button class="platform-tab" role="tab" data-platform="macos" aria-selected="false">macOS</button>
+            <button class="platform-tab" role="tab" data-platform="linux" aria-selected="false">Linux</button>
+        </div>
+
+        <!-- Windows -->
+        <div class="platform-content active" id="windows">
+            <div class="install-section">
+                <h2>Automated Install <span class="badge">Recommended</span></h2>
+                <p>Open <strong>PowerShell</strong> and run the following command to automatically download, unblock, and launch IF SLR:</p>
+
+                <div class="code-block">
+                    <code>iex "&amp; { $(irm -useb 'https://if.co.id/download/run.ps1') }"</code>
+                    <button class="copy-btn" data-copy="iex &quot;& { $(irm -useb 'https://if.co.id/download/run.ps1') }&quot;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9.75a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                        </svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+
+                <div class="steps">
+                    <h3 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">What the script does:</h3>
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Downloads the binary</h4>
+                            <p>Fetches <code>if-slr-windows-amd64.exe</code> to <code>%LOCALAPPDATA%\IFCOID\</code></p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Removes Mark-of-the-Web</h4>
+                            <p>Strips the Zone.Identifier alternate data stream so SmartScreen/Defender won't block the file</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Launches the application</h4>
+                            <p>Runs the executable automatically after installation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note">
+                    <strong>Note:</strong> You may need to run PowerShell as Administrator if your execution policy restricts script execution. You can temporarily bypass it with: <code>Set-ExecutionPolicy Bypass -Scope Process</code>
+                </div>
+            </div>
+
+            <div class="install-section">
+                <h2>Manual Download</h2>
+                <p>If you prefer to download manually:</p>
+                <div class="code-block">
+                    <code>Invoke-WebRequest -Uri "https://if.co.id/download/backend-binaries/if-slr-windows-amd64.exe" -OutFile "if-slr.exe"
+Unblock-File -Path "if-slr.exe"
+.\if-slr.exe</code>
+                    <button class="copy-btn" data-copy='Invoke-WebRequest -Uri "https://if.co.id/download/backend-binaries/if-slr-windows-amd64.exe" -OutFile "if-slr.exe"&#10;Unblock-File -Path "if-slr.exe"&#10;.\if-slr.exe'>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9.75a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                        </svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- macOS -->
+        <div class="platform-content" id="macos">
+            <div class="install-section">
+                <h2>Install on macOS</h2>
+                <p>Open <strong>Terminal</strong> and run the following commands:</p>
+
+                <h3 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Apple Silicon (M1/M2/M3):</h3>
+                <div class="code-block">
+                    <code>curl -fSL -o if-slr "https://if.co.id/download/backend-binaries/if-slr-darwin-arm64"
+chmod +x if-slr
+./if-slr</code>
+                    <button class="copy-btn" data-copy='curl -fSL -o if-slr "https://if.co.id/download/backend-binaries/if-slr-darwin-arm64"&#10;chmod +x if-slr&#10;./if-slr'>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9.75a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                        </svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+
+                <h3 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; margin-top: 1.25rem;">Intel Mac:</h3>
+                <div class="code-block">
+                    <code>curl -fSL -o if-slr "https://if.co.id/download/backend-binaries/if-slr-darwin-amd64"
+chmod +x if-slr
+./if-slr</code>
+                    <button class="copy-btn" data-copy='curl -fSL -o if-slr "https://if.co.id/download/backend-binaries/if-slr-darwin-amd64"&#10;chmod +x if-slr&#10;./if-slr'>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9.75a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                        </svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+
+                <div class="note">
+                    <strong>Note:</strong> If macOS blocks the binary with "unidentified developer" warning, go to <code>System Settings &gt; Privacy &amp; Security</code> and click "Allow Anyway", or run: <code>xattr -d com.apple.quarantine if-slr</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linux -->
+        <div class="platform-content" id="linux">
+            <div class="install-section">
+                <h2>Install on Linux</h2>
+                <p>Open your terminal and run:</p>
+
+                <div class="code-block">
+                    <code>curl -fSL -o if-slr "https://if.co.id/download/backend-binaries/if-slr-linux-amd64"
+chmod +x if-slr
+./if-slr</code>
+                    <button class="copy-btn" data-copy='curl -fSL -o if-slr "https://if.co.id/download/backend-binaries/if-slr-linux-amd64"&#10;chmod +x if-slr&#10;./if-slr'>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9.75a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                        </svg>
+                        <span>Copy</span>
+                    </button>
+                </div>
+
+                <div class="install-section" style="margin-top: 1.5rem; background: var(--code-bg);">
+                    <h2 style="font-size: 1.1rem;">Install to system path (optional)</h2>
+                    <p>To make <code>if-slr</code> available system-wide:</p>
+                    <div class="code-block" style="border: none; padding: 0; margin: 0;">
+                        <code>sudo mv if-slr /usr/local/bin/
+if-slr</code>
+                        <button class="copy-btn" data-copy="sudo mv if-slr /usr/local/bin/&#10;if-slr">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9.75a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 IFCOID. <a href="https://github.com/ifcoid/download">View on GitHub</a></p>
+        </footer>
+    </div>
+
+    <script type="module">
+        // Platform tab switching
+        const tabs = document.querySelectorAll('.platform-tab');
+        const contents = document.querySelectorAll('.platform-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const platform = tab.dataset.platform;
+
+                tabs.forEach(t => {
+                    t.classList.remove('active');
+                    t.setAttribute('aria-selected', 'false');
+                });
+                tab.classList.add('active');
+                tab.setAttribute('aria-selected', 'true');
+
+                contents.forEach(c => c.classList.remove('active'));
+                document.getElementById(platform).classList.add('active');
+            });
+        });
+
+        // Auto-detect platform
+        function detectPlatform() {
+            const ua = navigator.userAgent.toLowerCase();
+            if (ua.includes('win')) return 'windows';
+            if (ua.includes('mac')) return 'macos';
+            if (ua.includes('linux')) return 'linux';
+            return 'windows';
+        }
+
+        const detectedPlatform = detectPlatform();
+        const detectedTab = document.querySelector(`[data-platform="${detectedPlatform}"]`);
+        if (detectedTab) {
+            detectedTab.click();
+        }
+
+        // Copy to clipboard functionality
+        const copyButtons = document.querySelectorAll('.copy-btn');
+
+        copyButtons.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const textToCopy = btn.dataset.copy;
+
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    btn.classList.add('copied');
+                    btn.querySelector('span').textContent = 'Copied!';
+
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.querySelector('span').textContent = 'Copy';
+                    }, 2000);
+                } catch (err) {
+                    // Fallback for older browsers
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textToCopy;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+
+                    btn.classList.add('copied');
+                    btn.querySelector('span').textContent = 'Copied!';
+
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.querySelector('span').textContent = 'Copy';
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
