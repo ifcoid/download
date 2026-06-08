@@ -252,6 +252,170 @@
             text-decoration: underline;
         }
 
+        /* Tutorial accordion styles */
+        .tutorial-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .tutorial-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .tutorial-section > p {
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+        }
+
+        .tutorial-accordion {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        .tutorial-accordion-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: var(--code-bg);
+            border: none;
+            color: var(--text);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: left;
+        }
+
+        .tutorial-accordion-header:hover {
+            background: var(--surface-hover);
+        }
+
+        .tutorial-accordion-header .accordion-icon {
+            transition: transform 0.3s;
+            flex-shrink: 0;
+            margin-left: 0.5rem;
+        }
+
+        .tutorial-accordion.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .tutorial-accordion-body {
+            display: none;
+            padding: 1.25rem;
+            background: var(--code-bg);
+            border-top: 1px solid var(--border);
+        }
+
+        .tutorial-accordion.open .tutorial-accordion-body {
+            display: block;
+        }
+
+        .tutorial-step {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            align-items: flex-start;
+        }
+
+        .tutorial-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .tutorial-step-number {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #fff;
+            margin-top: 0.1rem;
+        }
+
+        .tutorial-step-content {
+            flex: 1;
+        }
+
+        .tutorial-step-content p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .tutorial-step-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .tutorial-step-content code {
+            background: var(--surface-hover);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+        .tutorial-step-content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .tutorial-step-content a:hover {
+            text-decoration: underline;
+        }
+
+        .tutorial-label {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            background: var(--surface-hover);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+            font-weight: 400;
+        }
+
+        .tutorial-result {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--success);
+        }
+
+        .tutorial-result code {
+            color: var(--success);
+            background: transparent;
+            padding: 0;
+        }
+
+        .tutorial-warning {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #fbbf24;
+        }
+
         @media (max-width: 640px) {
             .container {
                 padding: 1rem;
@@ -419,6 +583,334 @@
                 </div>
             </div>
 
+            <!-- Tutorial: Cara Mendapatkan Environment Variables -->
+            <div class="tutorial-section">
+                <h2>Tutorial: Cara Mendapatkan Environment Variables</h2>
+                <p>Panduan langkah demi langkah untuk mendapatkan setiap nilai environment variable yang dibutuhkan. Klik masing-masing bagian untuk membuka tutorial.</p>
+
+                <!-- MongoDB Atlas -->
+                <div class="tutorial-accordion" id="tutorial-mongo">
+                    <button class="tutorial-accordion-header" onclick="toggleAccordion('tutorial-mongo')">
+                        <span>MongoDB Atlas (MONGO_URI &amp; DB_NAME) <span class="tutorial-label">Database</span></span>
+                        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="tutorial-accordion-body">
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">1</div>
+                            <div class="tutorial-step-content">
+                                <p>Buka <a href="https://www.mongodb.com/cloud/atlas/register" target="_blank">mongodb.com/cloud/atlas/register</a> dan daftar akun baru (gratis). Anda bisa mendaftar menggunakan email atau langsung melalui akun Google.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">2</div>
+                            <div class="tutorial-step-content">
+                                <p>Setelah login, klik tombol <strong>"Build a Database"</strong> atau <strong>"Create"</strong>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">3</div>
+                            <div class="tutorial-step-content">
+                                <p>Pilih tier <strong>M0 (Free)</strong> - ini adalah tier gratis yang tidak memerlukan kartu kredit.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">4</div>
+                            <div class="tutorial-step-content">
+                                <p>Pada bagian <strong>Cloud Provider &amp; Region</strong>, pilih:</p>
+                                <p>- Provider: <strong>Google Cloud (GCP)</strong></p>
+                                <p>- Region: <strong>Jakarta (asia-southeast2)</strong></p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">5</div>
+                            <div class="tutorial-step-content">
+                                <p>Beri nama cluster Anda (misalnya <code>slr-cluster</code>) lalu klik <strong>"Create Deployment"</strong>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">6</div>
+                            <div class="tutorial-step-content">
+                                <p>Buat <strong>Database User</strong>:</p>
+                                <p>- Username: pilih username (misal: <code>slr_user</code>)</p>
+                                <p>- Password: buat password yang kuat (simpan baik-baik!)</p>
+                                <p>Klik <strong>"Create Database User"</strong>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">7</div>
+                            <div class="tutorial-step-content">
+                                <p>Pada bagian <strong>"Where would you like to connect from?"</strong>, pilih <strong>"My Local Environment"</strong> dan tambahkan IP <code>0.0.0.0/0</code> (Allow Access from Anywhere) agar bisa diakses dari mana saja. Klik <strong>"Add Entry"</strong>, lalu <strong>"Finish and Close"</strong>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">8</div>
+                            <div class="tutorial-step-content">
+                                <p>Kembali ke halaman <strong>Database Deployments</strong>, klik <strong>"Connect"</strong> pada cluster Anda.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">9</div>
+                            <div class="tutorial-step-content">
+                                <p>Pilih <strong>"Drivers"</strong> sebagai metode koneksi. Anda akan melihat connection string seperti:</p>
+                                <div class="tutorial-result">
+                                    <code>mongodb+srv://slr_user:&lt;password&gt;@slr-cluster.xxxxx.mongodb.net/?retryWrites=true&amp;w=majority</code>
+                                </div>
+                                <p>Ganti <code>&lt;password&gt;</code> dengan password database user yang Anda buat di langkah 6.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">10</div>
+                            <div class="tutorial-step-content">
+                                <p>Sekarang Anda sudah mendapatkan nilai yang diperlukan:</p>
+                                <div class="tutorial-result">
+                                    <code>MONGO_URI</code> = connection string lengkap dari langkah 9<br>
+                                    <code>DB_NAME</code> = <code>slr_agentic_db</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Neo4j AuraDB -->
+                <div class="tutorial-accordion" id="tutorial-neo4j">
+                    <button class="tutorial-accordion-header" onclick="toggleAccordion('tutorial-neo4j')">
+                        <span>Neo4j AuraDB (NEO4JURI, NEO4JUSER, NEO4JPASSWORD) <span class="tutorial-label">Knowledge Graph</span></span>
+                        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="tutorial-accordion-body">
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">1</div>
+                            <div class="tutorial-step-content">
+                                <p>Buka <a href="https://console.neo4j.io" target="_blank">console.neo4j.io</a> dan daftar akun baru (gratis). Bisa menggunakan email atau akun Google.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">2</div>
+                            <div class="tutorial-step-content">
+                                <p>Setelah login, klik <strong>"New Instance"</strong> atau <strong>"Create Instance"</strong>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">3</div>
+                            <div class="tutorial-step-content">
+                                <p>Pilih tier <strong>"AuraDB Free"</strong> - ini adalah tier gratis, tidak memerlukan kartu kredit.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">4</div>
+                            <div class="tutorial-step-content">
+                                <p>Beri nama instance Anda (misalnya <code>slr-graph</code>) dan pilih region yang tersedia.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">5</div>
+                            <div class="tutorial-step-content">
+                                <p>Klik <strong>"Create"</strong>. Sistem akan menampilkan <strong>kredensial yang hanya muncul sekali</strong>:</p>
+                                <div class="tutorial-warning">
+                                    ⚠️ PENTING: Simpan kredensial ini segera! Password hanya ditampilkan satu kali dan tidak bisa dilihat lagi setelah dialog ditutup.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">6</div>
+                            <div class="tutorial-step-content">
+                                <p>Catat informasi berikut yang ditampilkan:</p>
+                                <p>- <strong>Connection URI</strong>: berbentuk <code>neo4j+s://xxxxxxxx.databases.neo4j.io</code></p>
+                                <p>- <strong>Username</strong>: biasanya <code>neo4j</code></p>
+                                <p>- <strong>Password</strong>: password yang di-generate otomatis</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">7</div>
+                            <div class="tutorial-step-content">
+                                <p>Tunggu beberapa menit hingga status instance berubah menjadi <strong>"Running"</strong>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">8</div>
+                            <div class="tutorial-step-content">
+                                <p>Sekarang Anda sudah mendapatkan nilai yang diperlukan:</p>
+                                <div class="tutorial-result">
+                                    <code>NEO4JURI</code> = Connection URI (contoh: <code>neo4j+s://xxxxxxxx.databases.neo4j.io</code>)<br>
+                                    <code>NEO4JUSER</code> = Username (biasanya <code>neo4j</code>)<br>
+                                    <code>NEO4JPASSWORD</code> = Password yang Anda catat
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Qdrant Cloud -->
+                <div class="tutorial-accordion" id="tutorial-qdrant">
+                    <button class="tutorial-accordion-header" onclick="toggleAccordion('tutorial-qdrant')">
+                        <span>Qdrant Cloud (QDRANT_ENDPOINT &amp; QDRANT_API_KEY) <span class="tutorial-label">Vector Database</span></span>
+                        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="tutorial-accordion-body">
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">1</div>
+                            <div class="tutorial-step-content">
+                                <p>Buka <a href="https://cloud.qdrant.io" target="_blank">cloud.qdrant.io</a> dan daftar akun baru (gratis). Bisa menggunakan email atau akun Google/GitHub.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">2</div>
+                            <div class="tutorial-step-content">
+                                <p>Setelah login, klik <strong>"Create Cluster"</strong> atau <strong>"+ Create"</strong>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">3</div>
+                            <div class="tutorial-step-content">
+                                <p>Pilih tier <strong>"Free"</strong> - tersedia 1GB storage gratis, tidak memerlukan kartu kredit.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">4</div>
+                            <div class="tutorial-step-content">
+                                <p>Beri nama cluster (misalnya <code>slr-vectors</code>), pilih region yang tersedia, lalu klik <strong>"Create"</strong>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">5</div>
+                            <div class="tutorial-step-content">
+                                <p>Tunggu hingga cluster selesai dibuat (biasanya beberapa detik hingga satu menit).</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">6</div>
+                            <div class="tutorial-step-content">
+                                <p>Setelah cluster aktif, klik pada cluster tersebut. Anda akan melihat <strong>Cluster URL</strong> (endpoint) yang berbentuk:</p>
+                                <div class="tutorial-result">
+                                    <code>https://xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.us-east4-0.gcp.cloud.qdrant.io</code>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">7</div>
+                            <div class="tutorial-step-content">
+                                <p>Untuk mendapatkan <strong>API Key</strong>, buka menu <strong>"Data Access Control"</strong> atau klik ikon kunci/gembok pada dashboard.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">8</div>
+                            <div class="tutorial-step-content">
+                                <p>Klik <strong>"Create API Key"</strong>, lalu salin API key yang ditampilkan.</p>
+                                <div class="tutorial-warning">
+                                    ⚠️ PENTING: Simpan API key ini segera! API key hanya ditampilkan satu kali.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">9</div>
+                            <div class="tutorial-step-content">
+                                <p>Sekarang Anda sudah mendapatkan nilai yang diperlukan:</p>
+                                <div class="tutorial-result">
+                                    <code>QDRANT_ENDPOINT</code> = Cluster URL dari langkah 6<br>
+                                    <code>QDRANT_API_KEY</code> = API key dari langkah 8
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telegram Bot -->
+                <div class="tutorial-accordion" id="tutorial-telegram">
+                    <button class="tutorial-accordion-header" onclick="toggleAccordion('tutorial-telegram')">
+                        <span>Telegram Bot (TELEGRAM_BOT_TOKEN &amp; CHAT_ID) <span class="tutorial-label">Notification</span></span>
+                        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="tutorial-accordion-body">
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">1</div>
+                            <div class="tutorial-step-content">
+                                <p><strong>Install Telegram</strong> di handphone Anda:</p>
+                                <p>- Android: <a href="https://play.google.com/store/apps/details?id=org.telegram.messenger" target="_blank">Download di Google Play Store</a></p>
+                                <p>- iPhone: <a href="https://apps.apple.com/app/telegram-messenger/id686449807" target="_blank">Download di App Store</a></p>
+                                <p>Daftar akun Telegram menggunakan nomor telepon Anda jika belum memiliki akun.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">2</div>
+                            <div class="tutorial-step-content">
+                                <p><strong>Buat Bot baru melalui BotFather:</strong></p>
+                                <p>- Buka Telegram, lalu cari <code>@BotFather</code> di kolom pencarian.</p>
+                                <p>- Klik/tap pada <strong>BotFather</strong> (yang terverifikasi dengan centang biru).</p>
+                                <p>- Klik <strong>"Start"</strong> atau ketik <code>/start</code>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">3</div>
+                            <div class="tutorial-step-content">
+                                <p>Ketik perintah <code>/newbot</code> untuk membuat bot baru.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">4</div>
+                            <div class="tutorial-step-content">
+                                <p>BotFather akan bertanya <strong>nama</strong> untuk bot Anda. Ketik nama yang diinginkan (misalnya: <code>SLR Notifikasi</code>).</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">5</div>
+                            <div class="tutorial-step-content">
+                                <p>Selanjutnya BotFather akan bertanya <strong>username</strong> untuk bot. Username harus diakhiri dengan <code>bot</code> (misalnya: <code>slr_notif_bot</code>).</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">6</div>
+                            <div class="tutorial-step-content">
+                                <p>Setelah berhasil, BotFather akan menampilkan <strong>token bot</strong> Anda:</p>
+                                <div class="tutorial-result">
+                                    <code>TELEGRAM_BOT_TOKEN</code> = Token yang diberikan BotFather (format: <code>123456789:ABCDefGHIjklMNOpqrsTUVwxyz</code>)
+                                </div>
+                                <div class="tutorial-warning">
+                                    ⚠️ PENTING: Jangan bagikan token ini kepada siapapun! Token ini memberikan kontrol penuh atas bot Anda.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">7</div>
+                            <div class="tutorial-step-content">
+                                <p><strong>Mendapatkan Chat ID Anda:</strong></p>
+                                <p>Ada dua cara untuk mendapatkan Chat ID:</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">8</div>
+                            <div class="tutorial-step-content">
+                                <p><strong>Cara 1 - Menggunakan @userinfobot:</strong></p>
+                                <p>- Buka Telegram, cari <code>@userinfobot</code></p>
+                                <p>- Klik <strong>"Start"</strong> atau ketik <code>/start</code></p>
+                                <p>- Bot akan langsung menampilkan <strong>Id</strong> Anda (angka numerik)</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">9</div>
+                            <div class="tutorial-step-content">
+                                <p><strong>Cara 2 - Menggunakan API getUpdates:</strong></p>
+                                <p>- Pertama, kirim pesan apapun ke bot yang baru Anda buat (cari bot menggunakan username-nya)</p>
+                                <p>- Lalu buka URL berikut di browser (ganti TOKEN dengan token bot Anda):</p>
+                                <div class="tutorial-result">
+                                    <code>https://api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code>
+                                </div>
+                                <p>- Cari nilai <code>"chat":{"id": 123456789}</code> pada response JSON. Angka tersebut adalah Chat ID Anda.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">10</div>
+                            <div class="tutorial-step-content">
+                                <p>Sekarang Anda sudah mendapatkan nilai yang diperlukan:</p>
+                                <div class="tutorial-result">
+                                    <code>TELEGRAM_BOT_TOKEN</code> = Token dari BotFather (langkah 6)<br>
+                                    <code>CHAT_ID</code> = ID numerik Anda (langkah 8 atau 9)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="install-section">
                 <h2>Manual Download</h2>
                 <p>If you prefer to download manually:</p>
@@ -532,6 +1024,14 @@ if-slr</code>
             <p>&copy; 2024 IFCOID. <a href="https://github.com/ifcoid/download">View on GitHub</a></p>
         </footer>
     </div>
+
+    <script>
+        // Accordion toggle for tutorials
+        function toggleAccordion(id) {
+            const accordion = document.getElementById(id);
+            accordion.classList.toggle('open');
+        }
+    </script>
 
     <script type="module">
         // Platform tab switching
