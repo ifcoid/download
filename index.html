@@ -310,19 +310,33 @@
                     <div class="step">
                         <div class="step-number">1</div>
                         <div class="step-content">
+                            <h4>Checks &amp; installs cloudflared</h4>
+                            <p>Verifies if <code>cloudflared</code> is available. If not, installs it via winget or direct download.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Configures environment variables</h4>
+                            <p>Checks required env vars (MongoDB, Neo4j, Qdrant, Embedding, Telegram) and prompts you to set any missing ones.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
                             <h4>Downloads the binary</h4>
                             <p>Fetches <code>if-slr-windows-amd64.exe</code> to <code>%LOCALAPPDATA%\IFCOID\</code></p>
                         </div>
                     </div>
                     <div class="step">
-                        <div class="step-number">2</div>
+                        <div class="step-number">4</div>
                         <div class="step-content">
                             <h4>Removes Mark-of-the-Web</h4>
                             <p>Strips the Zone.Identifier alternate data stream so SmartScreen/Defender won't block the file</p>
                         </div>
                     </div>
                     <div class="step">
-                        <div class="step-number">3</div>
+                        <div class="step-number">5</div>
                         <div class="step-content">
                             <h4>Launches the application</h4>
                             <p>Runs the executable automatically after installation</p>
