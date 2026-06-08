@@ -1,22 +1,168 @@
-# IF SLR - Automated Installer for Windows
+# IF SLR - Enhanced Automated Installer for Windows
 # Usage: iex "& { $(irm -useb 'https://if.co.id/download/run.ps1') }"
 
 $ErrorActionPreference = "Stop"
 
 $AppName = "if-slr"
-$ExeName = "if-slr-windows-amd64.exe"
-$DownloadUrl = "https://if.co.id/download/backend-binaries/$ExeName"
+$ExeName = "if-slr.exe"
+$RemoteName = "if-slr-windows-amd64.exe"
+$DownloadUrl = "https://if.co.id/download/backend-binaries/$RemoteName"
 $InstallDir = Join-Path $env:LOCALAPPDATA "IFCOID"
 $ExePath = Join-Path $InstallDir $ExeName
+$DefaultPort = 50607
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  IF SLR - Automated Installer" -ForegroundColor Cyan
+Write-Host "  IF SLR - Enhanced Automated Installer" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Step 1: Create installation directory
-Write-Host "[1/4] Creating installation directory..." -ForegroundColor Yellow
+# ============================================================
+# Step 1: Check/Install cloudflared
+# ============================================================
+Write-Host "[1/9] Checking cloudflared installation..." -ForegroundColor Yellow
+
+$cloudflaredInstalled = $false
+try {
+    $cfVer = & cloudflared --version 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  cloudflared already installed: $cfVer" -ForegroundColor Green
+        $cloudflaredInstalled = $true
+    }
+} catch {
+    $cloudflaredInstalled = $false
+}
+
+if (-not $cloudflaredInstalled) {
+    Write-Host "  cloudflared not found. Attempting installation..." -ForegroundColor Yellow
+
+    # Try winget first
+    $wingetAvailable = $false
+    try {
+        $wgVer = & winget --version 2>&1
+        if ($LASTEXITCODE -eq 0) { $wingetAvailable = $true }
+    } catch {}
+
+    if ($wingetAvailable) {
+        Write-Host "  Installing via winget..." -ForegroundColor Yellow
+        try {
+            & winget install --id Cloudflare.cloudflared --accept-source-agreements --accept-package-agreements --silent 2>&1 | Out-Null
+            # Refresh PATH
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+            $cfCheck = & cloudflared --version 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host "  cloudflared installed via winget successfully." -ForegroundColor Green
+                $cloudflaredInstalled = $true
+            }
+        } catch {
+            Write-Host "  winget installation failed. Trying direct download..." -ForegroundColor Yellow
+        }
+    }
+
+    # Fallback: direct download from GitHub
+    if (-not $cloudflaredInstalled) {
+        Write-Host "  Downloading cloudflared from GitHub..." -ForegroundColor Yellow
+        $cfUrl = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe"
+        $cfPath = Join-Path $InstallDir "cloudflared.exe"
+
+        # Ensure install dir exists for cloudflared
+        if (!(Test-Path $InstallDir)) {
+            New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+        }
+
+        try {
+            Invoke-WebRequest -Uri $cfUrl -OutFile $cfPath -UseBasicParsing
+            Write-Host "  cloudflared downloaded to: $cfPath" -ForegroundColor Green
+            $cloudflaredInstalled = $true
+            # We'll use the full path later
+        } catch {
+            Write-Host "  WARNING: Failed to download cloudflared." -ForegroundColor Red
+            Write-Host "  Tunnel feature will not be available." -ForegroundColor Red
+            Write-Host "  You can install it manually from: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/" -ForegroundColor Yellow
+        }
+    }
+}
+
+# Determine cloudflared executable path
+$cloudflaredExe = "cloudflared"
+$cfLocalPath = Join-Path $InstallDir "cloudflared.exe"
+if (Test-Path $cfLocalPath) {
+    $cloudflaredExe = $cfLocalPath
+}
+
+# ============================================================
+# Step 2: Check/Configure Environment Variables
+# ============================================================
+Write-Host ""
+Write-Host "[2/9] Checking environment variables..." -ForegroundColor Yellow
+Write-Host ""
+
+$envVars = @(
+    @{ Name = "MONGO_URI";          Description = "MongoDB connection URI";                      Default = "mongodb://localhost:27017";  Group = "Database (MongoDB)" },
+    @{ Name = "DB_NAME";            Description = "Database name";                               Default = "slr_agentic_db";             Group = "Database (MongoDB)" },
+    @{ Name = "NEO4JURI";           Description = "Neo4j/AuraDB connection URI";                 Default = "";                           Group = "Knowledge Graph (Neo4j)" },
+    @{ Name = "NEO4JUSER";          Description = "Neo4j username";                              Default = "";                           Group = "Knowledge Graph (Neo4j)" },
+    @{ Name = "NEO4JPASSWORD";      Description = "Neo4j password";                              Default = "";                           Group = "Knowledge Graph (Neo4j)" },
+    @{ Name = "QDRANT_ENDPOINT";    Description = "Qdrant server endpoint URL";                  Default = "";                           Group = "Vector Database (Qdrant)" },
+    @{ Name = "QDRANT_API_KEY";     Description = "Qdrant API key";                              Default = "";                           Group = "Vector Database (Qdrant)" },
+    @{ Name = "EMBED_ENDPOINT";     Description = "Embedding server endpoint URL";               Default = "";                           Group = "Embedding Server" },
+    @{ Name = "EMBED_API_KEY";      Description = "Embedding server API key";                    Default = "";                           Group = "Embedding Server" },
+    @{ Name = "EMBED_MODEL";        Description = "Embedding model name";                        Default = "BAAI/bge-m3";                Group = "Embedding Server" },
+    @{ Name = "TELEGRAM_BOT_TOKEN"; Description = "Telegram Bot token from BotFather";           Default = "";                           Group = "Telegram Notification" },
+    @{ Name = "CHAT_ID";            Description = "Telegram chat/group ID for alerts";           Default = "";                           Group = "Telegram Notification" },
+    @{ Name = "PORT";               Description = "API server port";                             Default = "$DefaultPort";               Group = "Server" }
+)
+
+$currentGroup = ""
+foreach ($var in $envVars) {
+    if ($var.Group -ne $currentGroup) {
+        $currentGroup = $var.Group
+        Write-Host ""
+        Write-Host "  --- $currentGroup ---" -ForegroundColor Cyan
+    }
+
+    $currentValue = [System.Environment]::GetEnvironmentVariable($var.Name, "User")
+
+    if ([string]::IsNullOrWhiteSpace($currentValue)) {
+        $defaultDisplay = if ($var.Default) { " [default: $($var.Default)]" } else { "" }
+        Write-Host "  $($var.Name) is NOT set." -ForegroundColor Red
+        Write-Host "    Description: $($var.Description)$defaultDisplay" -ForegroundColor Gray
+
+        $input = Read-Host "    Enter value for $($var.Name) (press Enter for default)"
+        if ([string]::IsNullOrWhiteSpace($input)) {
+            if ($var.Default) {
+                $valueToSet = $var.Default
+                if ($valueToSet -eq "`$DefaultPort") { $valueToSet = "$DefaultPort" }
+            } else {
+                Write-Host "    Skipped (no default available)." -ForegroundColor Yellow
+                continue
+            }
+        } else {
+            $valueToSet = $input
+        }
+
+        [System.Environment]::SetEnvironmentVariable($var.Name, $valueToSet, "User")
+        # Also set for current session
+        Set-Item -Path "Env:\$($var.Name)" -Value $valueToSet
+        Write-Host "    Set $($var.Name) = $valueToSet" -ForegroundColor Green
+    } else {
+        Write-Host "  $($var.Name) = $currentValue" -ForegroundColor Green
+    }
+}
+
+# Ensure PORT is available in current session
+$Port = [System.Environment]::GetEnvironmentVariable("PORT", "User")
+if ([string]::IsNullOrWhiteSpace($Port)) { $Port = "$DefaultPort" }
+$env:PORT = $Port
+
+Write-Host ""
+Write-Host "  All environment variables configured." -ForegroundColor Green
+
+# ============================================================
+# Step 3: Create installation directory
+# ============================================================
+Write-Host ""
+Write-Host "[3/9] Creating installation directory..." -ForegroundColor Yellow
 if (!(Test-Path $InstallDir)) {
     New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
     Write-Host "  Created: $InstallDir" -ForegroundColor Green
@@ -24,11 +170,13 @@ if (!(Test-Path $InstallDir)) {
     Write-Host "  Directory already exists: $InstallDir" -ForegroundColor Green
 }
 
-# Step 2: Download the binary
-Write-Host "[2/4] Downloading $ExeName..." -ForegroundColor Yellow
+# ============================================================
+# Step 4: Download the binary (renamed to if-slr.exe)
+# ============================================================
+Write-Host "[4/9] Downloading $RemoteName as $ExeName..." -ForegroundColor Yellow
 try {
     Invoke-WebRequest -Uri $DownloadUrl -OutFile $ExePath -UseBasicParsing
-    Write-Host "  Downloaded to: $ExePath" -ForegroundColor Green
+    Write-Host "  Downloaded and saved as: $ExePath" -ForegroundColor Green
 } catch {
     Write-Host "  ERROR: Failed to download file." -ForegroundColor Red
     Write-Host "  URL: $DownloadUrl" -ForegroundColor Red
@@ -36,8 +184,24 @@ try {
     exit 1
 }
 
-# Step 3: Remove Mark-of-the-Web (Zone.Identifier)
-Write-Host "[3/4] Removing Mark-of-the-Web (Zone.Identifier)..." -ForegroundColor Yellow
+# ============================================================
+# Step 5: Add install directory to user PATH
+# ============================================================
+Write-Host "[5/9] Adding $InstallDir to user PATH..." -ForegroundColor Yellow
+$userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
+if ($userPath -notlike "*$InstallDir*") {
+    $newPath = "$userPath;$InstallDir"
+    [System.Environment]::SetEnvironmentVariable("Path", $newPath, "User")
+    $env:Path = "$env:Path;$InstallDir"
+    Write-Host "  Added to PATH. You can now run 'if-slr' from Win+R or any terminal." -ForegroundColor Green
+} else {
+    Write-Host "  Already in PATH." -ForegroundColor Green
+}
+
+# ============================================================
+# Step 6: Remove Mark-of-the-Web (Zone.Identifier)
+# ============================================================
+Write-Host "[6/9] Removing Mark-of-the-Web (Zone.Identifier)..." -ForegroundColor Yellow
 try {
     if (Test-Path "$ExePath:Zone.Identifier") {
         Remove-Item "$ExePath:Zone.Identifier" -Force
@@ -52,22 +216,69 @@ try {
     Write-Host "  $_" -ForegroundColor Yellow
 }
 
-# Step 4: Run the executable
-Write-Host "[4/4] Launching $ExeName..." -ForegroundColor Yellow
+# ============================================================
+# Step 7: Check if PORT is in use and kill the process
+# ============================================================
+Write-Host "[7/9] Checking if port $Port is in use..." -ForegroundColor Yellow
+try {
+    $portInUse = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue
+    if ($portInUse) {
+        $processId = $portInUse[0].OwningProcess
+        $processName = (Get-Process -Id $processId -ErrorAction SilentlyContinue).ProcessName
+        Write-Host "  Port $Port is in use by process: $processName (PID: $processId)" -ForegroundColor Yellow
+        Write-Host "  Killing process..." -ForegroundColor Yellow
+        Stop-Process -Id $processId -Force
+        Start-Sleep -Seconds 1
+        Write-Host "  Process killed. Port $Port is now free." -ForegroundColor Green
+    } else {
+        Write-Host "  Port $Port is free." -ForegroundColor Green
+    }
+} catch {
+    Write-Host "  Could not check port status (non-critical)." -ForegroundColor Yellow
+}
+
+# ============================================================
+# Step 8: Launch if-slr.exe
+# ============================================================
+Write-Host "[8/9] Launching $ExeName on port $Port..." -ForegroundColor Yellow
 Write-Host ""
 try {
-    Start-Process -FilePath $ExePath -Wait
-    Write-Host ""
-    Write-Host "  Done! $AppName has been launched successfully." -ForegroundColor Green
+    $appProcess = Start-Process -FilePath $ExePath -PassThru
+    Write-Host "  $AppName started successfully (PID: $($appProcess.Id))." -ForegroundColor Green
 } catch {
     Write-Host "  ERROR: Failed to launch executable." -ForegroundColor Red
     Write-Host "  $_" -ForegroundColor Red
     exit 1
 }
 
+# Wait a moment for the app to start
+Start-Sleep -Seconds 3
+
+# ============================================================
+# Step 9: Start cloudflared tunnel
+# ============================================================
+Write-Host "[9/9] Starting cloudflared tunnel to http://localhost:$Port..." -ForegroundColor Yellow
+Write-Host ""
+
+if ($cloudflaredInstalled) {
+    try {
+        $tunnelProcess = Start-Process -FilePath $cloudflaredExe -ArgumentList "tunnel", "--url", "http://localhost:$Port" -PassThru -NoNewWindow
+        Write-Host "  cloudflared tunnel started (PID: $($tunnelProcess.Id))." -ForegroundColor Green
+        Write-Host "  Your app will be accessible via the URL shown by cloudflared above." -ForegroundColor Green
+    } catch {
+        Write-Host "  WARNING: Failed to start cloudflared tunnel." -ForegroundColor Yellow
+        Write-Host "  You can start it manually: cloudflared tunnel --url http://localhost:$Port" -ForegroundColor Yellow
+    }
+} else {
+    Write-Host "  cloudflared is not available. Skipping tunnel." -ForegroundColor Yellow
+    Write-Host "  Install cloudflared and run: cloudflared tunnel --url http://localhost:$Port" -ForegroundColor Yellow
+}
+
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "  Installation complete!" -ForegroundColor Cyan
 Write-Host "  Location: $ExePath" -ForegroundColor Cyan
+Write-Host "  Port: $Port" -ForegroundColor Cyan
+Write-Host "  Run from anywhere: if-slr" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
