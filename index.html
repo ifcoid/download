@@ -920,6 +920,64 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Konfigurasi Base URL API Endpoint -->
+                <div class="tutorial-accordion" id="tutorial-baseurl">
+                    <button class="tutorial-accordion-header" onclick="toggleAccordion('tutorial-baseurl')">
+                        <span>Konfigurasi Base URL API Endpoint <span class="tutorial-label">Setup Akhir</span></span>
+                        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="tutorial-accordion-body">
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">1</div>
+                            <div class="tutorial-step-content">
+                                <p>Pastikan aplikasi <strong>IF SLR</strong> sudah berjalan dan <strong>cloudflared tunnel</strong> sudah aktif. Pada terminal/PowerShell, cloudflared akan menampilkan URL seperti:</p>
+                                <div class="tutorial-result">
+                                    <code>https://random-words.trycloudflare.com</code>
+                                </div>
+                                <p>Salin (copy) URL tersebut.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">2</div>
+                            <div class="tutorial-step-content">
+                                <p>Buka browser dan akses <a href="https://if.co.id/slr" target="_blank">https://if.co.id/slr</a>.</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">3</div>
+                            <div class="tutorial-step-content">
+                                <p>Setelah login, masuk ke halaman <strong>"Konfigurasi"</strong> (Configuration).</p>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">4</div>
+                            <div class="tutorial-step-content">
+                                <p>Pada bagian <strong>"Base URL API Endpoint"</strong>, paste URL cloudflared yang sudah Anda salin di langkah 1.</p>
+                                <div class="tutorial-result">
+                                    <code>Base URL API Endpoint</code> = URL dari cloudflared (contoh: <code>https://random-words.trycloudflare.com</code>)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">5</div>
+                            <div class="tutorial-step-content">
+                                <p>Klik tombol <strong>"Simpan"</strong> atau <strong>"Save"</strong> untuk menyimpan konfigurasi.</p>
+                                <div class="tutorial-result">
+                                    Selesai! Aplikasi IF SLR sekarang terhubung dengan backend Anda melalui cloudflared tunnel.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tutorial-step">
+                            <div class="tutorial-step-number">6</div>
+                            <div class="tutorial-step-content">
+                                <div class="tutorial-warning">
+                                    ⚠️ PENTING: Setiap kali Anda menjalankan ulang cloudflared tunnel, URL akan berubah (karena menggunakan quick tunnel). Pastikan untuk memperbarui Base URL API Endpoint di halaman Konfigurasi setiap kali URL berubah.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="install-section">
