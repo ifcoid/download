@@ -20,7 +20,7 @@ Write-Host ""
 # ============================================================
 # Step 1: Check/Install cloudflared
 # ============================================================
-Write-Host "[1/9] Checking cloudflared installation..." -ForegroundColor Yellow
+Write-Host "[1/10] Checking cloudflared installation..." -ForegroundColor Yellow
 
 $cloudflaredInstalled = $false
 try {
@@ -94,23 +94,21 @@ if (Test-Path $cfLocalPath) {
 # Step 2: Check/Configure Environment Variables
 # ============================================================
 Write-Host ""
-Write-Host "[2/9] Checking environment variables..." -ForegroundColor Yellow
+Write-Host "[2/10] Checking environment variables..." -ForegroundColor Yellow
 Write-Host ""
 
 $envVars = @(
-    @{ Name = "MONGO_URI";          Description = "MongoDB connection URI";                      Default = "mongodb://localhost:27017";  Group = "Database (MongoDB)" },
-    @{ Name = "DB_NAME";            Description = "Database name";                               Default = "slr_agentic_db";             Group = "Database (MongoDB)" },
-    @{ Name = "NEO4JURI";           Description = "Neo4j/AuraDB connection URI";                 Default = "";                           Group = "Knowledge Graph (Neo4j)" },
-    @{ Name = "NEO4JUSER";          Description = "Neo4j username";                              Default = "";                           Group = "Knowledge Graph (Neo4j)" },
-    @{ Name = "NEO4JPASSWORD";      Description = "Neo4j password";                              Default = "";                           Group = "Knowledge Graph (Neo4j)" },
-    @{ Name = "QDRANT_ENDPOINT";    Description = "Qdrant server endpoint URL";                  Default = "";                           Group = "Vector Database (Qdrant)" },
-    @{ Name = "QDRANT_API_KEY";     Description = "Qdrant API key";                              Default = "";                           Group = "Vector Database (Qdrant)" },
-    @{ Name = "EMBED_ENDPOINT";     Description = "Embedding server endpoint URL";               Default = "";                           Group = "Embedding Server" },
-    @{ Name = "EMBED_API_KEY";      Description = "Embedding server API key";                    Default = "";                           Group = "Embedding Server" },
-    @{ Name = "EMBED_MODEL";        Description = "Embedding model name";                        Default = "BAAI/bge-m3";                Group = "Embedding Server" },
-    @{ Name = "TELEGRAM_BOT_TOKEN"; Description = "Telegram Bot token from BotFather";           Default = "";                           Group = "Telegram Notification" },
-    @{ Name = "CHAT_ID";            Description = "Telegram chat/group ID for alerts";           Default = "";                           Group = "Telegram Notification" },
-    @{ Name = "PORT";               Description = "API server port";                             Default = "$DefaultPort";               Group = "Server" }
+    @{ Name = "MONGO_URI";            Description = "MongoDB connection URI";                      Default = "mongodb://localhost:27017";  Group = "Database (MongoDB)" },
+    @{ Name = "DB_NAME";              Description = "Database name";                               Default = "slr_agentic_db";             Group = "Database (MongoDB)" },
+    @{ Name = "NEO4JURI";             Description = "Neo4j/AuraDB connection URI";                 Default = "";                           Group = "Knowledge Graph (Neo4j)" },
+    @{ Name = "NEO4JUSER";            Description = "Neo4j username";                              Default = "";                           Group = "Knowledge Graph (Neo4j)" },
+    @{ Name = "NEO4JPASSWORD";        Description = "Neo4j password";                              Default = "";                           Group = "Knowledge Graph (Neo4j)" },
+    @{ Name = "QDRANT_ENDPOINT";      Description = "Qdrant server endpoint URL";                  Default = "";                           Group = "Vector Database (Qdrant)" },
+    @{ Name = "QDRANT_API_KEY";       Description = "Qdrant API key";                              Default = "";                           Group = "Vector Database (Qdrant)" },
+    @{ Name = "TELEGRAM_BOT_TOKEN";   Description = "Telegram Bot token from BotFather";           Default = "";                           Group = "Telegram Notification" },
+    @{ Name = "CHAT_ID";              Description = "Telegram chat/group ID for alerts";           Default = "";                           Group = "Telegram Notification" },
+    @{ Name = "PORT";                 Description = "API server port";                             Default = "$DefaultPort";               Group = "Server" },
+    @{ Name = "REGISTER_INVITE_CODE"; Description = "Invite code for first-time user registration"; Default = "";                          Group = "Registration" }
 )
 
 $currentGroup = ""
@@ -162,7 +160,7 @@ Write-Host "  All environment variables configured." -ForegroundColor Green
 # Step 3: Create installation directory
 # ============================================================
 Write-Host ""
-Write-Host "[3/9] Creating installation directory..." -ForegroundColor Yellow
+Write-Host "[3/10] Creating installation directory..." -ForegroundColor Yellow
 if (!(Test-Path $InstallDir)) {
     New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
     Write-Host "  Created: $InstallDir" -ForegroundColor Green
@@ -173,7 +171,7 @@ if (!(Test-Path $InstallDir)) {
 # ============================================================
 # Step 4: Download the binary (renamed to if-slr.exe)
 # ============================================================
-Write-Host "[4/9] Downloading $RemoteName as $ExeName..." -ForegroundColor Yellow
+Write-Host "[4/10] Downloading $RemoteName as $ExeName..." -ForegroundColor Yellow
 try {
     Invoke-WebRequest -Uri $DownloadUrl -OutFile $ExePath -UseBasicParsing
     Write-Host "  Downloaded and saved as: $ExePath" -ForegroundColor Green
@@ -187,7 +185,7 @@ try {
 # ============================================================
 # Step 5: Add install directory to user PATH
 # ============================================================
-Write-Host "[5/9] Adding $InstallDir to user PATH..." -ForegroundColor Yellow
+Write-Host "[5/10] Adding $InstallDir to user PATH..." -ForegroundColor Yellow
 $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
 if ($userPath -notlike "*$InstallDir*") {
     $newPath = "$userPath;$InstallDir"
@@ -201,7 +199,7 @@ if ($userPath -notlike "*$InstallDir*") {
 # ============================================================
 # Step 6: Remove Mark-of-the-Web (Zone.Identifier)
 # ============================================================
-Write-Host "[6/9] Removing Mark-of-the-Web (Zone.Identifier)..." -ForegroundColor Yellow
+Write-Host "[6/10] Removing Mark-of-the-Web (Zone.Identifier)..." -ForegroundColor Yellow
 try {
     if (Test-Path "$ExePath:Zone.Identifier") {
         Remove-Item "$ExePath:Zone.Identifier" -Force
@@ -219,7 +217,7 @@ try {
 # ============================================================
 # Step 7: Check if PORT is in use and kill the process
 # ============================================================
-Write-Host "[7/9] Checking if port $Port is in use..." -ForegroundColor Yellow
+Write-Host "[7/10] Checking if port $Port is in use..." -ForegroundColor Yellow
 try {
     $portInUse = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue
     if ($portInUse) {
@@ -240,7 +238,7 @@ try {
 # ============================================================
 # Step 8: Launch if-slr.exe
 # ============================================================
-Write-Host "[8/9] Launching $ExeName on port $Port..." -ForegroundColor Yellow
+Write-Host "[8/10] Launching $ExeName on port $Port..." -ForegroundColor Yellow
 Write-Host ""
 try {
     $appProcess = Start-Process -FilePath $ExePath -PassThru
@@ -257,7 +255,7 @@ Start-Sleep -Seconds 3
 # ============================================================
 # Step 9: Start cloudflared tunnel
 # ============================================================
-Write-Host "[9/9] Starting cloudflared tunnel to http://localhost:$Port..." -ForegroundColor Yellow
+Write-Host "[9/10] Starting cloudflared tunnel to http://localhost:$Port..." -ForegroundColor Yellow
 Write-Host ""
 
 if ($cloudflaredInstalled) {
@@ -272,6 +270,19 @@ if ($cloudflaredInstalled) {
 } else {
     Write-Host "  cloudflared is not available. Skipping tunnel." -ForegroundColor Yellow
     Write-Host "  Install cloudflared and run: cloudflared tunnel --url http://localhost:$Port" -ForegroundColor Yellow
+}
+
+# ============================================================
+# Step 10: Open browser to IF SLR web interface
+# ============================================================
+Write-Host ""
+Write-Host "[10/10] Opening browser to https://if.co.id/slr..." -ForegroundColor Yellow
+try {
+    Start-Process "https://if.co.id/slr"
+    Write-Host "  Browser opened successfully." -ForegroundColor Green
+} catch {
+    Write-Host "  Could not open browser automatically." -ForegroundColor Yellow
+    Write-Host "  Please open https://if.co.id/slr manually." -ForegroundColor Yellow
 }
 
 Write-Host ""
