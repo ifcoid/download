@@ -318,7 +318,7 @@
                         <div class="step-number">2</div>
                         <div class="step-content">
                             <h4>Configures environment variables</h4>
-                            <p>Interactively checks and sets all required env vars (MongoDB, Neo4j, Qdrant, Embedding, Telegram, PORT)</p>
+                            <p>Interactively checks and sets all required env vars (MongoDB, Neo4j, Qdrant, Telegram, PORT)</p>
                         </div>
                     </div>
                     <div class="step">
@@ -370,6 +370,13 @@
                             <p>Creates a quick tunnel via <code>cloudflared tunnel --url http://localhost:PORT</code> for external access</p>
                         </div>
                     </div>
+                    <div class="step">
+                        <div class="step-number">10</div>
+                        <div class="step-content">
+                            <h4>Opens browser</h4>
+                            <p>Automatically opens your default browser to <a href="https://if.co.id/slr" style="color: var(--accent);">https://if.co.id/slr</a></p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="note">
@@ -394,18 +401,13 @@
 [Environment]::SetEnvironmentVariable("QDRANT_ENDPOINT", "https://...cloud.qdrant.io", "User")
 [Environment]::SetEnvironmentVariable("QDRANT_API_KEY", "your-api-key", "User")
 
-# Embedding Server
-[Environment]::SetEnvironmentVariable("EMBED_ENDPOINT", "https://your-embed-server", "User")
-[Environment]::SetEnvironmentVariable("EMBED_API_KEY", "your-api-key", "User")
-[Environment]::SetEnvironmentVariable("EMBED_MODEL", "BAAI/bge-m3", "User")
-
 # Telegram Notification
 [Environment]::SetEnvironmentVariable("TELEGRAM_BOT_TOKEN", "your-bot-token", "User")
 [Environment]::SetEnvironmentVariable("CHAT_ID", "your-chat-id", "User")
 
 # Server Port
 [Environment]::SetEnvironmentVariable("PORT", "50607", "User")</code>
-                    <button class="copy-btn" data-copy='# Database (MongoDB)&#10;[Environment]::SetEnvironmentVariable("MONGO_URI", "mongodb+srv://...", "User")&#10;[Environment]::SetEnvironmentVariable("DB_NAME", "slr_agentic_db", "User")&#10;&#10;# Knowledge Graph (Neo4j/AuraDB)&#10;[Environment]::SetEnvironmentVariable("NEO4JURI", "neo4j+s://...", "User")&#10;[Environment]::SetEnvironmentVariable("NEO4JUSER", "neo4j", "User")&#10;[Environment]::SetEnvironmentVariable("NEO4JPASSWORD", "your-password", "User")&#10;&#10;# Vector Database (Qdrant)&#10;[Environment]::SetEnvironmentVariable("QDRANT_ENDPOINT", "https://...cloud.qdrant.io", "User")&#10;[Environment]::SetEnvironmentVariable("QDRANT_API_KEY", "your-api-key", "User")&#10;&#10;# Embedding Server&#10;[Environment]::SetEnvironmentVariable("EMBED_ENDPOINT", "https://your-embed-server", "User")&#10;[Environment]::SetEnvironmentVariable("EMBED_API_KEY", "your-api-key", "User")&#10;[Environment]::SetEnvironmentVariable("EMBED_MODEL", "BAAI/bge-m3", "User")&#10;&#10;# Telegram Notification&#10;[Environment]::SetEnvironmentVariable("TELEGRAM_BOT_TOKEN", "your-bot-token", "User")&#10;[Environment]::SetEnvironmentVariable("CHAT_ID", "your-chat-id", "User")&#10;&#10;# Server Port&#10;[Environment]::SetEnvironmentVariable("PORT", "50607", "User")'>
+                    <button class="copy-btn" data-copy='# Database (MongoDB)&#10;[Environment]::SetEnvironmentVariable("MONGO_URI", "mongodb+srv://...", "User")&#10;[Environment]::SetEnvironmentVariable("DB_NAME", "slr_agentic_db", "User")&#10;&#10;# Knowledge Graph (Neo4j/AuraDB)&#10;[Environment]::SetEnvironmentVariable("NEO4JURI", "neo4j+s://...", "User")&#10;[Environment]::SetEnvironmentVariable("NEO4JUSER", "neo4j", "User")&#10;[Environment]::SetEnvironmentVariable("NEO4JPASSWORD", "your-password", "User")&#10;&#10;# Vector Database (Qdrant)&#10;[Environment]::SetEnvironmentVariable("QDRANT_ENDPOINT", "https://...cloud.qdrant.io", "User")&#10;[Environment]::SetEnvironmentVariable("QDRANT_API_KEY", "your-api-key", "User")&#10;&#10;# Telegram Notification&#10;[Environment]::SetEnvironmentVariable("TELEGRAM_BOT_TOKEN", "your-bot-token", "User")&#10;[Environment]::SetEnvironmentVariable("CHAT_ID", "your-chat-id", "User")&#10;&#10;# Server Port&#10;[Environment]::SetEnvironmentVariable("PORT", "50607", "User")'>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9.75a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
                         </svg>
