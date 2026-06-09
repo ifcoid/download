@@ -34,7 +34,7 @@ Write-Host ""
 # ============================================================
 # Step 1: Check/Install cloudflared
 # ============================================================
-Write-Host "[1/11] Checking cloudflared installation..." -ForegroundColor Yellow
+Write-Host "[1/12] Checking cloudflared installation..." -ForegroundColor Yellow
 
 $cloudflaredInstalled = $false
 try {
@@ -108,7 +108,7 @@ if (Test-Path $cfLocalPath) {
 # Step 2: Check/Configure Environment Variables
 # ============================================================
 Write-Host ""
-Write-Host "[2/11] Checking environment variables..." -ForegroundColor Yellow
+Write-Host "[2/12] Checking environment variables..." -ForegroundColor Yellow
 Write-Host ""
 
 $envVars = @(
@@ -174,7 +174,7 @@ Write-Host "  All environment variables configured." -ForegroundColor Green
 # Step 3: Create installation directory
 # ============================================================
 Write-Host ""
-Write-Host "[3/11] Creating installation directory..." -ForegroundColor Yellow
+Write-Host "[3/12] Creating installation directory..." -ForegroundColor Yellow
 if (!(Test-Path $InstallDir)) {
     New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
     Write-Host "  Created: $InstallDir" -ForegroundColor Green
@@ -186,7 +186,7 @@ if (!(Test-Path $InstallDir)) {
 # Step 4: Add Windows Defender Exclusions
 # ============================================================
 Write-Host ""
-Write-Host "[4/11] Adding Windows Defender exclusions..." -ForegroundColor Yellow
+Write-Host "[4/12] Adding Windows Defender exclusions..." -ForegroundColor Yellow
 try {
     Add-MpPreference -ExclusionPath $InstallDir
     Write-Host "  Exclusion added for directory: $InstallDir" -ForegroundColor Green
@@ -203,9 +203,38 @@ try {
 }
 
 # ============================================================
-# Step 5: Download the binary (renamed to if-slr.exe)
+# Step 5: Kill running processes (if-slr and cloudflared)
 # ============================================================
-Write-Host "[5/11] Downloading $RemoteName as $ExeName..." -ForegroundColor Yellow
+Write-Host ""
+Write-Host "[5/12] Stopping running processes..." -ForegroundColor Yellow
+
+$ifSlrProcess = Get-Process -Name "if-slr" -ErrorAction SilentlyContinue
+if ($ifSlrProcess) {
+    Write-Host "  if-slr is running. Stopping..." -ForegroundColor Yellow
+    Stop-Process -Name "if-slr" -Force
+    Write-Host "  if-slr stopped." -ForegroundColor Green
+} else {
+    Write-Host "  if-slr is not running." -ForegroundColor Green
+}
+
+$cloudflaredProcess = Get-Process -Name "cloudflared" -ErrorAction SilentlyContinue
+if ($cloudflaredProcess) {
+    Write-Host "  cloudflared is running. Stopping..." -ForegroundColor Yellow
+    Stop-Process -Name "cloudflared" -Force
+    Write-Host "  cloudflared stopped." -ForegroundColor Green
+} else {
+    Write-Host "  cloudflared is not running." -ForegroundColor Green
+}
+
+if ($ifSlrProcess -or $cloudflaredProcess) {
+    Start-Sleep -Seconds 1
+    Write-Host "  Waited for file handles to be released." -ForegroundColor Green
+}
+
+# ============================================================
+# Step 6: Download the binary (renamed to if-slr.exe)
+# ============================================================
+Write-Host "[6/12] Downloading $RemoteName as $ExeName..." -ForegroundColor Yellow
 try {
     Invoke-WebRequest -Uri $DownloadUrl -OutFile $ExePath -UseBasicParsing
     Write-Host "  Downloaded and saved as: $ExePath" -ForegroundColor Green
@@ -225,9 +254,9 @@ try {
 }
 
 # ============================================================
-# Step 6: Add install directory to user PATH
+# Step 7: Add install directory to user PATH
 # ============================================================
-Write-Host "[6/11] Adding $InstallDir to user PATH..." -ForegroundColor Yellow
+Write-Host "[7/12] Adding $InstallDir to user PATH..." -ForegroundColor Yellow
 $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
 if ($userPath -notlike "*$InstallDir*") {
     $newPath = "$userPath;$InstallDir"
@@ -239,9 +268,9 @@ if ($userPath -notlike "*$InstallDir*") {
 }
 
 # ============================================================
-# Step 7: Remove Mark-of-the-Web (Zone.Identifier)
+# Step 8: Remove Mark-of-the-Web (Zone.Identifier)
 # ============================================================
-Write-Host "[7/11] Removing Mark-of-the-Web (Zone.Identifier)..." -ForegroundColor Yellow
+Write-Host "[8/12] Removing Mark-of-the-Web (Zone.Identifier)..." -ForegroundColor Yellow
 try {
     if (Test-Path "$ExePath:Zone.Identifier") {
         Remove-Item "$ExePath:Zone.Identifier" -Force
@@ -257,9 +286,9 @@ try {
 }
 
 # ============================================================
-# Step 8: Check if PORT is in use and kill the process
+# Step 9: Check if PORT is in use and kill the process
 # ============================================================
-Write-Host "[8/11] Checking if port $Port is in use..." -ForegroundColor Yellow
+Write-Host "[9/12] Checking if port $Port is in use..." -ForegroundColor Yellow
 try {
     $portInUse = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue
     if ($portInUse) {
@@ -278,9 +307,9 @@ try {
 }
 
 # ============================================================
-# Step 9: Launch if-slr.exe
+# Step 10: Launch if-slr.exe
 # ============================================================
-Write-Host "[9/11] Launching $ExeName on port $Port..." -ForegroundColor Yellow
+Write-Host "[10/12] Launching $ExeName on port $Port..." -ForegroundColor Yellow
 Write-Host ""
 try {
     $appProcess = Start-Process -FilePath $ExePath -PassThru
@@ -295,9 +324,9 @@ try {
 Start-Sleep -Seconds 3
 
 # ============================================================
-# Step 10: Start cloudflared tunnel
+# Step 11: Start cloudflared tunnel
 # ============================================================
-Write-Host "[10/11] Starting cloudflared tunnel to http://localhost:$Port..." -ForegroundColor Yellow
+Write-Host "[11/12] Starting cloudflared tunnel to http://localhost:$Port..." -ForegroundColor Yellow
 Write-Host ""
 
 if ($cloudflaredInstalled) {
@@ -315,10 +344,10 @@ if ($cloudflaredInstalled) {
 }
 
 # ============================================================
-# Step 11: Open browser to IF SLR web interface
+# Step 12: Open browser to IF SLR web interface
 # ============================================================
 Write-Host ""
-Write-Host "[11/11] Opening browser to https://if.co.id/slr..." -ForegroundColor Yellow
+Write-Host "[12/12] Opening browser to https://if.co.id/slr..." -ForegroundColor Yellow
 try {
     Start-Process "https://if.co.id/slr"
     Write-Host "  Browser opened successfully." -ForegroundColor Green
