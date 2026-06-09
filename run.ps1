@@ -9,7 +9,9 @@
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Host "Requesting Administrator privileges..." -ForegroundColor Yellow
     $scriptUrl = "https://if.co.id/download/run.ps1"
-    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"iex \`\"& { `$(irm -useb '$scriptUrl') }\`\"`""
+    $tempScript = Join-Path $env:TEMP "if-slr-install.ps1"
+    Invoke-WebRequest -Uri $scriptUrl -OutFile $tempScript -UseBasicParsing
+    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$tempScript`""
     exit
 }
 
