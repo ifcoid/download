@@ -17,11 +17,12 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown          # ← ini yang penting
           message: |
-            ✅ **Deploy Berhasil!**
+            ✅ *Deploy Berhasil!*
 
             Binary backend SLR (nsa) telah ter-deploy ke GitHub Pages.
 
-            📥 **Unduh di:** ${{ github.event.deployment_status.environment_url }}
-            📦 **Repository:** ${{ github.repository }}
-            🔨 **Commit:** ${{ github.sha }}
+            📥 *Unduh di:* ${{ github.event.deployment_status.environment_url }}
+            📦 *Repository:* ${{ github.repository }}
+            🔨 *Commit:* ${{ github.sha }}
